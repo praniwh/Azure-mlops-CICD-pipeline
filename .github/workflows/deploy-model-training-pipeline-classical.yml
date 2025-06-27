@@ -1,12 +1,13 @@
 name: deploy-model-training-pipeline
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
+  workflow_dispatch: # Add this line to enable manual triggers
 
 jobs:
   get-config:
@@ -18,7 +19,7 @@ jobs:
       needs: get-config
       uses: ./.github/workflows/custom-create-compute.yml
       with:
-        cluster_name: test-cluster
+        cluster_name: cpu-cluster
         size: Standard_DS11_v2
         min_instances: 0
         max_instances: 1
@@ -40,7 +41,7 @@ jobs:
     with:
       resource_group: ${{ needs.get-config.outputs.resource_group }}
       workspace_name: ${{ needs.get-config.outputs.aml_workspace }}
-      name: machine-failure-data
+      name: pima-diabetes-data
       data_file: mlops/azureml/train/data.yml
     # secrets:
     #   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
